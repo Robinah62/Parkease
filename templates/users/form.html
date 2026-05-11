@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card-pe">
+      <div class="card-pe-header"><i class="bi bi-person-gear me-2"></i>{{ title }}</div>
+      <div class="card-pe-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label required-label">Username</label>{{ form.username }}{% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Role</label>{{ form.role }}</div>
+            <div class="col-md-6"><label class="form-label">First Name</label>{{ form.first_name }}</div>
+            <div class="col-md-6"><label class="form-label">Last Name</label>{{ form.last_name }}</div>
+            <div class="col-md-6"><label class="form-label">Email</label>{{ form.email }}</div>
+            <div class="col-md-6"><label class="form-label">Phone</label>{{ form.phone }}</div>
+            {% if not target_user %}
+            <div class="col-md-6"><label class="form-label required-label">Password</label>{{ form.password }}{% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Confirm Password</label>{{ form.confirm_password }}{% if form.confirm_password.errors %}<div class="text-danger small mt-1">{{ form.confirm_password.errors.0 }}</div>{% endif %}</div>
+            {% endif %}
+            {% if target_user %}
+            <div class="col-md-6">
+              <label class="form-label">Account Status</label>
+              <div class="form-check mt-2">{{ form.is_active }} <label class="form-check-label">Active</label></div>
+            </div>
+            {% endif %}
+          </div>
+          {% if form.non_field_errors %}<div class="alert alert-danger mt-3">{{ form.non_field_errors }}</div>{% endif %}
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary-pe"><i class="bi bi-check-circle me-1"></i>Save User</button>
+            <a href="{% url 'user_list' %}" class="btn btn-outline-pe">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

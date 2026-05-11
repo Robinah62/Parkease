@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card-pe">
+      <div class="card-pe-header"><i class="bi bi-disc me-2"></i>{{ title }}</div>
+      <div class="card-pe-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label required-label">Customer Name</label>{{ form.customer_name }}{% if form.customer_name.errors %}<div class="text-danger small mt-1">{{ form.customer_name.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Phone Number</label>{{ form.phone_number }}{% if form.phone_number.errors %}<div class="text-danger small mt-1">{{ form.phone_number.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">Vehicle Plate (optional)</label>{{ form.vehicle_number_plate }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Service Type</label>{{ form.service_type }}</div>
+            <div class="col-md-6"><label class="form-label">Tyre Size</label>{{ form.tyre_size }}</div>
+            <div class="col-md-3"><label class="form-label required-label">Quantity</label>{{ form.quantity }}</div>
+            <div class="col-md-3"><label class="form-label required-label">Unit Price (UGX)</label>{{ form.unit_price }}</div>
+            <div class="col-12">
+              <div class="fee-preview" id="tyreTotal" style="display:none">
+                <i class="bi bi-calculator me-2"></i>Total Amount: <strong id="tyreTotalAmt">UGX 0</strong>
+              </div>
+            </div>
+            <div class="col-12"><label class="form-label">Notes</label>{{ form.notes }}</div>
+          </div>
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary-pe"><i class="bi bi-check-circle me-1"></i>Save Service</button>
+            <a href="{% url 'tyre_list' %}" class="btn btn-outline-pe">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const DEFAULT_PRICES={pressure:500,puncture:5000,valve:5000};
+function calcTotal(){
+  const qty=parseInt(document.querySelector('[name=quantity]').value)||0;
+  const price=parseFloat(document.getElementById('id_unit_price').value)||0;
+  const t=qty*price;
+  const el=document.getElementById('tyreTotal');
+  document.getElementById('tyreTotalAmt').textContent='UGX '+t.toLocaleString();
+  el.style.display=t>0?'block':'none';
+}
+document.getElementById('id_service_type').addEventListener('change',function(){
+  const p=DEFAULT_PRICES[this.value];
+  if(p)document.getElementById('id_unit_price').value=p;
+  calcTotal();
+});
+document.querySelector('[name=quantity]').addEventListener('input',calcTotal);
+document.getElementById('id_unit_price').addEventListener('input',calcTotal);
+calcTotal();
+</script>
+{% endblock %}

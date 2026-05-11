@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Vehicle Detail{% endblock %}
+{% block page_title %}Vehicle Detail{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-pe mb-3">
+      <div class="card-pe-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-car-front me-2"></i>{{ vehicle.number_plate }} &mdash; {{ vehicle.driver_name }}</span>
+        <span>{% if vehicle.status == 'parked' %}<span class="badge-status green">Parked</span>{% else %}<span class="badge-status gray">Signed Out</span>{% endif %}</span>
+      </div>
+      <div class="card-pe-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Receipt Number</div><div class="detail-val"><code>{{ vehicle.receipt_number }}</code></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Number Plate</div><div class="detail-val"><span class="badge-plate">{{ vehicle.number_plate }}</span></div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Driver Name</div><div class="detail-val">{{ vehicle.driver_name }}</div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Phone</div><div class="detail-val">{{ vehicle.phone_number }}</div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Vehicle Type</div><div class="detail-val">{{ vehicle.get_vehicle_type_display }}</div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Model / Color</div><div class="detail-val">{{ vehicle.vehicle_model }} / {{ vehicle.vehicle_color }}</div></div>
+          </div>
+          {% if vehicle.nin_number %}
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">NIN</div><div class="detail-val">{{ vehicle.nin_number }}</div></div>
+          </div>
+          {% endif %}
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Arrival Time</div><div class="detail-val">{{ vehicle.arrival_time|date:"d M Y H:i" }}</div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Duration</div><div class="detail-val">{{ vehicle.get_duration }}</div></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group"><div class="detail-label">Parking Fee</div><div class="detail-val" style="color:#185FA5;font-weight:700">UGX {{ vehicle.parking_fee|floatformat:0 }}</div></div>
+          </div>
+          {% if vehicle.notes %}
+          <div class="col-12">
+            <div class="detail-group"><div class="detail-label">Notes</div><div class="detail-val">{{ vehicle.notes }}</div></div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if vehicle.status == 'signed_out' %}
+    <div class="card-pe mb-3">
+      <div class="card-pe-header"><i class="bi bi-person-check me-2"></i>Sign-Out Information</div>
+      <div class="card-pe-body">
+        <div class="row g-3">
+          <div class="col-md-6"><div class="detail-group"><div class="detail-label">Signout Time</div><div class="detail-val">{{ vehicle.signout_time|date:"d M Y H:i" }}</div></div></div>
+          <div class="col-md-6"><div class="detail-group"><div class="detail-label">Receiver Name</div><div class="detail-val">{{ vehicle.receiver_name }}</div></div></div>
+          <div class="col-md-6"><div class="detail-group"><div class="detail-label">Receiver Phone</div><div class="detail-val">{{ vehicle.receiver_phone }}</div></div></div>
+          <div class="col-md-6"><div class="detail-group"><div class="detail-label">Gender</div><div class="detail-val">{{ vehicle.receiver_gender }}</div></div></div>
+          {% if vehicle.receiver_nin %}<div class="col-md-6"><div class="detail-group"><div class="detail-label">Receiver NIN</div><div class="detail-val">{{ vehicle.receiver_nin }}</div></div></div>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="d-flex gap-2 flex-wrap">
+      {% if vehicle.status == 'parked' %}
+        <a href="{% url 'vehicle_signout' vehicle.pk %}" class="btn btn-primary-pe"><i class="bi bi-box-arrow-right me-1"></i>Sign Out Vehicle</a>
+        <a href="{% url 'vehicle_edit' vehicle.pk %}" class="btn btn-outline-pe"><i class="bi bi-pencil me-1"></i>Edit</a>
+      {% else %}
+        <a href="{% url 'vehicle_receipt' vehicle.pk %}" class="btn btn-primary-pe"><i class="bi bi-receipt me-1"></i>View Receipt</a>
+      {% endif %}
+      {% if role == 'admin' or user.is_superuser %}
+        <a href="{% url 'vehicle_delete' vehicle.pk %}" class="btn btn-danger-pe"><i class="bi bi-trash me-1"></i>Delete</a>
+      {% endif %}
+      <a href="{% url 'vehicle_list' %}" class="btn btn-outline-pe"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

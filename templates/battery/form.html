@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-pe">
+      <div class="card-pe-header"><i class="bi bi-battery-charging me-2"></i>{{ title }}</div>
+      <div class="card-pe-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label required-label">Customer Name</label>{{ form.customer_name }}{% if form.customer_name.errors %}<div class="text-danger small mt-1">{{ form.customer_name.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Phone Number</label>{{ form.phone_number }}{% if form.phone_number.errors %}<div class="text-danger small mt-1">{{ form.phone_number.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">Vehicle Plate (optional)</label>{{ form.vehicle_number_plate }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Transaction Type</label>{{ form.transaction_type }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Battery Size</label>{{ form.battery_size }}</div>
+            <div class="col-md-6"><label class="form-label">Battery Brand</label>{{ form.battery_brand }}</div>
+            <div class="col-md-4"><label class="form-label required-label">Quantity</label>{{ form.quantity }}</div>
+            <div class="col-md-4"><label class="form-label required-label">Unit Price (UGX)</label>{{ form.unit_price }}</div>
+            <div class="col-md-4"><label class="form-label">Deposit Amount (UGX)</label>{{ form.deposit_amount }}</div>
+            <div class="col-12">
+              <div class="fee-preview" id="batTotal" style="display:none">
+                <i class="bi bi-calculator me-2"></i>Total Amount: <strong id="batTotalAmt">UGX 0</strong>
+              </div>
+            </div>
+            <div class="col-md-6" id="hire_days_row"><label class="form-label">Hire Duration (days)</label>{{ form.hire_duration_days }}</div>
+            <div class="col-md-6" id="due_date_row"><label class="form-label">Due Return Date</label>{{ form.due_date }}</div>
+            <div class="col-12"><label class="form-label">Notes</label>{{ form.notes }}</div>
+          </div>
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary-pe"><i class="bi bi-check-circle me-1"></i>Save Transaction</button>
+            <a href="{% url 'battery_list' %}" class="btn btn-outline-pe">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function calcBatTotal(){
+  const qty=parseInt(document.querySelector('[name=quantity]').value)||0;
+  const price=parseFloat(document.querySelector('[name=unit_price]').value)||0;
+  const t=qty*price;
+  const el=document.getElementById('batTotal');
+  document.getElementById('batTotalAmt').textContent='UGX '+t.toLocaleString();
+  el.style.display=t>0?'block':'none';
+}
+function toggleHireFields(){
+  const tt=document.getElementById('id_trans_type')?.value;
+  const show=tt==='hire';
+  ['hire_days_row','due_date_row'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=show?'block':'none';
+  });
+}
+document.querySelector('[name=quantity]').addEventListener('input',calcBatTotal);
+document.querySelector('[name=unit_price]').addEventListener('input',calcBatTotal);
+const tt=document.getElementById('id_trans_type');
+if(tt){tt.addEventListener('change',toggleHireFields);toggleHireFields();}
+calcBatTotal();
+</script>
+{% endblock %}

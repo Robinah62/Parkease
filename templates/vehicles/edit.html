@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Edit Vehicle{% endblock %}
+{% block page_title %}Edit Vehicle Record{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-pe">
+      <div class="card-pe-header"><i class="bi bi-pencil me-2"></i>Edit — {{ vehicle.number_plate }}</div>
+      <div class="card-pe-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label required-label">Driver Name</label>{{ form.driver_name }}{% if form.driver_name.errors %}<div class="text-danger small mt-1">{{ form.driver_name.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Vehicle Type</label>{{ form.vehicle_type }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Number Plate</label>{{ form.number_plate }}{% if form.number_plate.errors %}<div class="text-danger small mt-1">{{ form.number_plate.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Vehicle Model</label>{{ form.vehicle_model }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Vehicle Color</label>{{ form.vehicle_color }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Phone Number</label>{{ form.phone_number }}{% if form.phone_number.errors %}<div class="text-danger small mt-1">{{ form.phone_number.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label">NIN Number</label>{{ form.nin_number }}</div>
+            <div class="col-md-6"><label class="form-label required-label">Arrival Time</label>{{ form.arrival_time }}</div>
+            <div class="col-12"><label class="form-label">Notes</label>{{ form.notes }}</div>
+          </div>
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary-pe"><i class="bi bi-check-circle me-1"></i>Save Changes</button>
+            <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-outline-pe">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

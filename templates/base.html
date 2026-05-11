@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}ParkEase{% endblock %} | ParkEase</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <i class="bi bi-p-circle-fill brand-icon"></i>
+    <span class="brand-text">ParkEase</span>
+  </div>
+  <ul class="sidebar-nav">
+    <li><a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-speedometer2"></i> Dashboard</a></li>
+    <li class="nav-section">Parking</li>
+    <li><a href="{% url 'vehicle_list' %}" class="nav-link {% if 'vehicle' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-car-front"></i> Vehicles</a></li>
+    <li><a href="{% url 'vehicle_register' %}" class="nav-link">
+      <i class="bi bi-plus-circle"></i> Register Vehicle</a></li>
+    <li class="nav-section">Services</li>
+    <li><a href="{% url 'tyre_list' %}" class="nav-link {% if 'tyre' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-disc"></i> Tyre Clinic</a></li>
+    <li><a href="{% url 'battery_list' %}" class="nav-link {% if 'battery' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-battery-charging"></i> Battery Section</a></li>
+    <li class="nav-section">Analytics</li>
+    <li><a href="{% url 'reports' %}" class="nav-link {% if 'report' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-bar-chart-line"></i> Daily Reports</a></li>
+    {% if role == 'admin' or user.is_superuser %}
+    <li class="nav-section">Admin</li>
+    <li><a href="{% url 'user_list' %}" class="nav-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="bi bi-people"></i> User Management</a></li>
+    {% endif %}
+  </ul>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</div>
+      <div>
+        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+        <div class="user-role">
+          {% if role == 'admin' %}System Admin
+          {% elif role == 'tyre_manager' %}Tyre Manager
+          {% elif role == 'battery_manager' %}Battery Manager
+          {% else %}Attendant{% endif %}
+        </div>
+      </div>
+    </div>
+    <a href="{% url 'logout' %}" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+  </div>
+</nav>
+
+<div class="main-content" id="mainContent">
+  <header class="top-header">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar"><i class="bi bi-list"></i></button>
+    <div class="header-title">{% block page_title %}ParkEase{% endblock %}</div>
+    <div class="header-right">
+      <span class="clock" id="clock"></span>
+      <span class="badge-role">{{ role|default:"staff"|title }}</span>
+    </div>
+  </header>
+
+  {% if messages %}
+  <div class="px-4 pt-3">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show" role="alert">
+      {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="content-area">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+{% else %}
+{% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

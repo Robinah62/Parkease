@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Receipt {{ vehicle.receipt_number }}{% endblock %}
+{% block page_title %}Parking Receipt{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="receipt-card" id="receiptCard">
+      <div class="receipt-header">
+        <div class="receipt-logo"><i class="bi bi-p-circle-fill"></i> ParkEase</div>
+        <div class="receipt-subtitle">Parkville Management System — Kampala, Uganda</div>
+        <div class="receipt-divider"></div>
+        <div class="receipt-title">OFFICIAL PARKING RECEIPT</div>
+        <div class="receipt-number">{{ vehicle.receipt_number }}</div>
+      </div>
+      <div class="receipt-body">
+        <div class="receipt-row"><span>Driver Name</span><span>{{ vehicle.driver_name }}</span></div>
+        <div class="receipt-row"><span>Number Plate</span><span><strong>{{ vehicle.number_plate }}</strong></span></div>
+        <div class="receipt-row"><span>Vehicle Type</span><span>{{ vehicle.get_vehicle_type_display }}</span></div>
+        <div class="receipt-row"><span>Model / Color</span><span>{{ vehicle.vehicle_model }} / {{ vehicle.vehicle_color }}</span></div>
+        <div class="receipt-row"><span>Phone Number</span><span>{{ vehicle.phone_number }}</span></div>
+        {% if vehicle.nin_number %}<div class="receipt-row"><span>NIN</span><span>{{ vehicle.nin_number }}</span></div>{% endif %}
+        <div class="receipt-divider-light"></div>
+        <div class="receipt-row"><span>Arrival</span><span>{{ vehicle.arrival_time|date:"d M Y H:i" }}</span></div>
+        {% if vehicle.signout_time %}
+        <div class="receipt-row"><span>Departed</span><span>{{ vehicle.signout_time|date:"d M Y H:i" }}</span></div>
+        <div class="receipt-row"><span>Duration</span><span>{{ vehicle.get_duration }}</span></div>
+        <div class="receipt-divider-light"></div>
+        <div class="receipt-row"><span>Receiver Name</span><span>{{ vehicle.receiver_name }}</span></div>
+        <div class="receipt-row"><span>Receiver Phone</span><span>{{ vehicle.receiver_phone }}</span></div>
+        <div class="receipt-row"><span>Gender</span><span>{{ vehicle.receiver_gender }}</span></div>
+        {% if vehicle.receiver_nin %}<div class="receipt-row"><span>Receiver NIN</span><span>{{ vehicle.receiver_nin }}</span></div>{% endif %}
+        {% endif %}
+      </div>
+      <div class="receipt-total">
+        <div class="receipt-total-label">TOTAL PARKING FEE</div>
+        <div class="receipt-total-amount">UGX {{ vehicle.parking_fee|floatformat:0 }}</div>
+      </div>
+      <div class="receipt-footer">
+        <div>Served by: {{ vehicle.registered_by.get_full_name|default:vehicle.registered_by.username }}</div>
+        <div>Issued: {{ vehicle.arrival_time|date:"d M Y H:i" }}</div>
+        <div class="mt-1" style="font-size:11px;opacity:.6">Thank you for using ParkEase Parkville!</div>
+      </div>
+    </div>
+    <div class="d-flex gap-2 justify-content-center mt-3">
+      <button onclick="window.print()" class="btn btn-primary-pe"><i class="bi bi-printer me-1"></i>Print Receipt</button>
+      <a href="{% url 'vehicle_list' %}" class="btn btn-outline-pe"><i class="bi bi-car-front me-1"></i>All Vehicles</a>
+      <a href="{% url 'vehicle_register' %}" class="btn btn-outline-pe"><i class="bi bi-plus-circle me-1"></i>Register New</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

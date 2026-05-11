@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Vehicles{% endblock %}
+{% block page_title %}Vehicle Management{% endblock %}
+{% block content %}
+<div class="card-pe">
+  <div class="card-pe-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span><i class="bi bi-car-front me-2"></i>All Vehicles</span>
+    <a href="{% url 'vehicle_register' %}" class="btn btn-primary-pe btn-sm"><i class="bi bi-plus-circle me-1"></i>Register Vehicle</a>
+  </div>
+  <div class="filter-bar">
+    <form method="GET" class="d-flex flex-wrap gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1 small">Status</label>
+        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="" {% if not status_filter %}selected{% endif %}>All</option>
+          <option value="parked" {% if status_filter == 'parked' %}selected{% endif %}>Parked</option>
+          <option value="signed_out" {% if status_filter == 'signed_out' %}selected{% endif %}>Signed Out</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label mb-1 small">Date</label>
+        <input type="date" name="date" value="{{ date_filter }}" class="form-control form-control-sm" onchange="this.form.submit()"/>
+      </div>
+      <div>
+        <label class="form-label mb-1 small">Search</label>
+        <div class="input-group input-group-sm">
+          <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Name / Plate / Receipt"/>
+          <button type="submit" class="btn btn-primary-pe btn-sm"><i class="bi bi-search"></i></button>
+        </div>
+      </div>
+      {% if search or status_filter or date_filter %}<a href="{% url 'vehicle_list' %}" class="btn btn-outline-pe btn-sm align-self-end">Clear</a>{% endif %}
+    </form>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-pe">
+      <thead><tr>
+        <th>Receipt</th><th>Driver</th><th>Plate</th><th>Type</th><th>Model / Color</th><th>Arrival</th><th>Duration</th><th>Fee (UGX)</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        {% for v in vehicles %}
+        <tr>
+          <td><code>{{ v.receipt_number }}</code></td>
+          <td>{{ v.driver_name }}</td>
+          <td><span class="badge-plate">{{ v.number_plate }}</span></td>
+          <td>{{ v.get_vehicle_type_display }}</td>
+          <td>{{ v.vehicle_model }} / {{ v.vehicle_color }}</td>
+          <td>{{ v.arrival_time|date:"d M Y H:i" }}</td>
+          <td>{{ v.get_duration }}</td>
+          <td><strong>{{ v.parking_fee|floatformat:0 }}</strong></td>
+          <td>{% if v.status == 'parked' %}<span class="badge-status green">Parked</span>{% else %}<span class="badge-status gray">Signed Out</span>{% endif %}</td>
+          <td class="action-col">
+            <a href="{% url 'vehicle_detail' v.pk %}" class="btn btn-outline-pe btn-xs" title="View"><i class="bi bi-eye"></i></a>
+            {% if v.status == 'parked' %}
+              <a href="{% url 'vehicle_edit' v.pk %}" class="btn btn-outline-pe btn-xs" title="Edit"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'vehicle_signout' v.pk %}" class="btn btn-primary-pe btn-xs" title="Sign Out"><i class="bi bi-box-arrow-right"></i></a>
+            {% else %}
+              <a href="{% url 'vehicle_receipt' v.pk %}" class="btn btn-outline-pe btn-xs" title="Receipt"><i class="bi bi-receipt"></i></a>
+            {% endif %}
+            {% if role == 'admin' or user.is_superuser %}
+            <a href="{% url 'vehicle_delete' v.pk %}" class="btn btn-danger-pe btn-xs" title="Delete"><i class="bi bi-trash"></i></a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="10" class="text-center text-muted py-5">
+          <i class="bi bi-car-front" style="font-size:2.5rem;display:block;opacity:.2;margin-bottom:8px"></i>No vehicles found.
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

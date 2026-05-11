@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="bi bi-car-front"></i></div>
+      <div class="stat-value">{{ currently_parked }}</div>
+      <div class="stat-label">Currently Parked</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card stat-teal">
+      <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
+      <div class="stat-value">{{ signed_out_today }}</div>
+      <div class="stat-label">Signed Out Today</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card stat-navy">
+      <div class="stat-icon"><i class="bi bi-cash-stack"></i></div>
+      <div class="stat-value">{{ parking_revenue_today|floatformat:0 }}</div>
+      <div class="stat-label">Parking Revenue (UGX)</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card stat-sky">
+      <div class="stat-icon"><i class="bi bi-graph-up-arrow"></i></div>
+      <div class="stat-value">{{ total_revenue_today|floatformat:0 }}</div>
+      <div class="stat-label">Total Revenue (UGX)</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card-pe h-100">
+      <div class="card-pe-header"><i class="bi bi-disc me-2"></i>Tyre Clinic — Today</div>
+      <div class="card-pe-body d-flex flex-column align-items-center justify-content-center py-3">
+        <div class="section-revenue">UGX {{ tyre_revenue_today|floatformat:0 }}</div>
+        <a href="{% url 'tyre_list' %}" class="btn btn-outline-pe btn-sm mt-2">View Tyre Services</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card-pe h-100">
+      <div class="card-pe-header"><i class="bi bi-battery-charging me-2"></i>Battery — Today</div>
+      <div class="card-pe-body d-flex flex-column align-items-center justify-content-center py-3">
+        <div class="section-revenue">UGX {{ battery_revenue_today|floatformat:0 }}</div>
+        <a href="{% url 'battery_list' %}" class="btn btn-outline-pe btn-sm mt-2">View Battery Services</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card-pe h-100">
+      <div class="card-pe-header"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</div>
+      <div class="card-pe-body d-flex flex-column gap-2 py-3">
+        <a href="{% url 'vehicle_register' %}" class="btn btn-primary-pe btn-sm"><i class="bi bi-plus-circle me-1"></i>Register Vehicle</a>
+        <a href="{% url 'tyre_add' %}" class="btn btn-outline-pe btn-sm"><i class="bi bi-disc me-1"></i>Add Tyre Service</a>
+        <a href="{% url 'battery_add' %}" class="btn btn-outline-pe btn-sm"><i class="bi bi-battery-charging me-1"></i>Add Battery Transaction</a>
+        <a href="{% url 'reports' %}" class="btn btn-outline-pe btn-sm"><i class="bi bi-bar-chart me-1"></i>Today's Report</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-pe">
+  <div class="card-pe-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-clock-history me-2"></i>Recent Vehicles</span>
+    <a href="{% url 'vehicle_list' %}" class="btn btn-outline-pe btn-sm">View All</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-pe">
+      <thead><tr>
+        <th>Receipt No.</th><th>Driver</th><th>Plate</th><th>Type</th><th>Arrival</th><th>Fee (UGX)</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        {% for v in recent_vehicles %}
+        <tr>
+          <td><code>{{ v.receipt_number }}</code></td>
+          <td>{{ v.driver_name }}</td>
+          <td><span class="badge-plate">{{ v.number_plate }}</span></td>
+          <td>{{ v.get_vehicle_type_display }}</td>
+          <td>{{ v.arrival_time|date:"d M Y H:i" }}</td>
+          <td>{{ v.parking_fee|floatformat:0 }}</td>
+          <td>{% if v.status == 'parked' %}<span class="badge-status green">Parked</span>{% else %}<span class="badge-status gray">Signed Out</span>{% endif %}</td>
+          <td>
+            <a href="{% url 'vehicle_detail' v.pk %}" class="btn btn-outline-pe btn-xs">View</a>
+            {% if v.status == 'parked' %}<a href="{% url 'vehicle_signout' v.pk %}" class="btn btn-primary-pe btn-xs">Sign Out</a>{% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-4">No vehicles registered yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

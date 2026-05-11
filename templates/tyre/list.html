@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Tyre Clinic{% endblock %}
+{% block page_title %}Tyre Clinic{% endblock %}
+{% block content %}
+<div class="card-pe">
+  <div class="card-pe-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span><i class="bi bi-disc me-2"></i>Tyre Services</span>
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-primary-pe fw-bold small">Today's Revenue: UGX {{ today_total|floatformat:0 }}</span>
+      <a href="{% url 'tyre_add' %}" class="btn btn-primary-pe btn-sm"><i class="bi bi-plus-circle me-1"></i>Add Service</a>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <form method="GET" class="d-flex flex-wrap gap-2 align-items-end">
+      <div><label class="form-label mb-1 small">Date</label><input type="date" name="date" value="{{ date_filter }}" class="form-control form-control-sm" onchange="this.form.submit()"/></div>
+      <div><label class="form-label mb-1 small">Search</label>
+        <div class="input-group input-group-sm">
+          <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Customer / Plate / Receipt"/>
+          <button type="submit" class="btn btn-primary-pe btn-sm"><i class="bi bi-search"></i></button>
+        </div>
+      </div>
+      {% if search or date_filter %}<a href="{% url 'tyre_list' %}" class="btn btn-outline-pe btn-sm align-self-end">Clear</a>{% endif %}
+    </form>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-pe">
+      <thead><tr><th>Receipt</th><th>Customer</th><th>Phone</th><th>Plate</th><th>Service</th><th>Tyre Size</th><th>Qty</th><th>Unit Price</th><th>Total (UGX)</th><th>Date &amp; Time</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for s in services %}
+        <tr>
+          <td><code>{{ s.receipt_number }}</code></td>
+          <td>{{ s.customer_name }}</td>
+          <td>{{ s.phone_number }}</td>
+          <td><span class="badge-plate">{{ s.vehicle_number_plate|default:"—" }}</span></td>
+          <td>{{ s.get_service_type_display }}</td>
+          <td>{{ s.tyre_size|default:"—" }}</td>
+          <td>{{ s.quantity }}</td>
+          <td>{{ s.unit_price|floatformat:0 }}</td>
+          <td><strong>{{ s.total_amount|floatformat:0 }}</strong></td>
+          <td>{{ s.date_time|date:"d M Y H:i" }}</td>
+          <td class="action-col">
+            <a href="{% url 'tyre_edit' s.pk %}" class="btn btn-outline-pe btn-xs" title="Edit"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'tyre_delete' s.pk %}" class="btn btn-danger-pe btn-xs" title="Delete"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="11" class="text-center text-muted py-5"><i class="bi bi-disc" style="font-size:2rem;display:block;opacity:.2;margin-bottom:8px"></i>No tyre services found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

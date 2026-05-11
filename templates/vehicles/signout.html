@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Sign Out Vehicle{% endblock %}
+{% block page_title %}Vehicle Sign-Out{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-pe mb-3">
+      <div class="card-pe-header"><i class="bi bi-info-circle me-2"></i>Vehicle Being Released</div>
+      <div class="card-pe-body">
+        <div class="row g-2">
+          <div class="col-6 col-md-3"><div class="detail-group"><div class="detail-label">Receipt</div><div class="detail-val"><code>{{ vehicle.receipt_number }}</code></div></div></div>
+          <div class="col-6 col-md-3"><div class="detail-group"><div class="detail-label">Driver</div><div class="detail-val">{{ vehicle.driver_name }}</div></div></div>
+          <div class="col-6 col-md-3"><div class="detail-group"><div class="detail-label">Plate</div><div class="detail-val"><span class="badge-plate">{{ vehicle.number_plate }}</span></div></div></div>
+          <div class="col-6 col-md-3"><div class="detail-group"><div class="detail-label">Type</div><div class="detail-val">{{ vehicle.get_vehicle_type_display }}</div></div></div>
+          <div class="col-6 col-md-4"><div class="detail-group"><div class="detail-label">Arrived</div><div class="detail-val">{{ vehicle.arrival_time|date:"d M Y H:i" }}</div></div></div>
+          <div class="col-6 col-md-4"><div class="detail-group"><div class="detail-label">Duration So Far</div><div class="detail-val">{{ vehicle.get_duration }}</div></div></div>
+          <div class="col-6 col-md-4"><div class="detail-group"><div class="detail-label">Estimated Fee</div><div class="detail-val" style="color:#185FA5;font-weight:700;font-size:1.1rem">UGX {{ estimated_fee|floatformat:0 }}</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-pe">
+      <div class="card-pe-header"><i class="bi bi-person-check me-2"></i>Receiver Information</div>
+      <div class="card-pe-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label required-label">Receiver Full Name</label>{{ form.receiver_name }}{% if form.receiver_name.errors %}<div class="text-danger small mt-1">{{ form.receiver_name.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Receiver Phone</label>{{ form.receiver_phone }}{% if form.receiver_phone.errors %}<div class="text-danger small mt-1">{{ form.receiver_phone.errors.0 }}</div>{% endif %}</div>
+            <div class="col-md-6"><label class="form-label required-label">Gender</label>{{ form.receiver_gender }}</div>
+            <div class="col-md-6"><label class="form-label">NIN Number (optional)</label>{{ form.receiver_nin }}{% if form.receiver_nin.errors %}<div class="text-danger small mt-1">{{ form.receiver_nin.errors.0 }}</div>{% endif %}</div>
+          </div>
+          <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary-pe"><i class="bi bi-box-arrow-right me-1"></i>Complete Sign-Out &amp; Print Receipt</button>
+            <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-outline-pe">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

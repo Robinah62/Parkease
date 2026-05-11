@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Delete User{% endblock %}
+{% block page_title %}Delete User{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-5">
+  <div class="card-pe">
+    <div class="card-pe-header" style="color:#c0392b"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion</div>
+    <div class="card-pe-body text-center py-4">
+      <i class="bi bi-person-x" style="font-size:3rem;color:#e74c3c;display:block;margin-bottom:12px"></i>
+      <p class="mb-1">Delete user account:</p>
+      <p class="fw-bold fs-5 mb-1">{{ target_user.username }}</p>
+      <p class="text-muted mb-4">{{ target_user.get_full_name }}</p>
+      <p class="text-danger fw-bold mb-4">This action cannot be undone!</p>
+      <form method="POST" class="d-flex gap-2 justify-content-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger-pe"><i class="bi bi-trash me-1"></i>Delete User</button>
+        <a href="{% url 'user_list' %}" class="btn btn-outline-pe">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

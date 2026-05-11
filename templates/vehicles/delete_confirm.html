@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Delete Vehicle{% endblock %}
+{% block page_title %}Delete Vehicle{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="card-pe">
+      <div class="card-pe-header" style="color:#c0392b"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion</div>
+      <div class="card-pe-body text-center py-4">
+        <i class="bi bi-trash" style="font-size:3rem;color:#e74c3c;display:block;margin-bottom:12px"></i>
+        <p class="mb-1">You are about to permanently delete:</p>
+        <p class="fw-bold fs-5 mb-1">{{ vehicle.number_plate }} &mdash; {{ vehicle.driver_name }}</p>
+        <p class="text-muted small mb-4">Receipt: {{ vehicle.receipt_number }}</p>
+        <p class="text-danger fw-bold mb-4">This action cannot be undone!</p>
+        <form method="POST" class="d-flex gap-2 justify-content-center">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger-pe"><i class="bi bi-trash me-1"></i>Yes, Delete</button>
+          <a href="{% url 'vehicle_detail' vehicle.pk %}" class="btn btn-outline-pe">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

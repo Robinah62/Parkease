@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}User Management{% endblock %}
+{% block page_title %}User Management{% endblock %}
+{% block content %}
+<div class="card-pe">
+  <div class="card-pe-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-people me-2"></i>System Users</span>
+    <a href="{% url 'user_add' %}" class="btn btn-primary-pe btn-sm"><i class="bi bi-person-plus me-1"></i>Add User</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-pe">
+      <thead><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td><strong>{{ u.username }}</strong></td>
+          <td>{{ u.get_full_name|default:"—" }}</td>
+          <td>{{ u.email|default:"—" }}</td>
+          <td>
+            {% if u.is_superuser %}
+              <span class="badge-status blue">Superuser</span>
+            {% else %}
+              {% with profile=u.profile %}
+                {% if profile %}<span class="badge-status blue">{{ profile.get_role_display }}</span>{% else %}<span class="text-muted small">No role</span>{% endif %}
+              {% endwith %}
+            {% endif %}
+          </td>
+          <td>
+            {% with profile=u.profile %}
+              {{ profile.phone|default:"—" }}
+            {% endwith %}
+          </td>
+          <td>{% if u.is_active %}<span class="badge-status green">Active</span>{% else %}<span class="badge-status gray">Inactive</span>{% endif %}</td>
+          <td class="action-col">
+            <a href="{% url 'user_edit' u.pk %}" class="btn btn-outline-pe btn-xs" title="Edit"><i class="bi bi-pencil"></i></a>
+            {% if u != request.user %}<a href="{% url 'user_delete' u.pk %}" class="btn btn-danger-pe btn-xs" title="Delete"><i class="bi bi-trash"></i></a>{% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
